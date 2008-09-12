@@ -17,3 +17,15 @@
   cursor:pointer;
 }
 
+.tag-popular {
+  background-color:#eee;
+  color:#999;
+  padding:2px;
+  display:inline;
+  margin:2px;
+}
+.add-tag-popular {
+  color:green;
+  padding-left:5px;
+  cursor:pointer;
+}
