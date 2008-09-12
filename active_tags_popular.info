@@ -1,0 +1,8 @@
+; $Id$
+
+name = Active Tags Popular
+description = Further enhance Active Tags by making it easy for users to select from some popular tags
+dependencies[] = active_tags
+package = User interface
+core = 6.x
+
