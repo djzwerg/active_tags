@@ -20,7 +20,7 @@ function active_tags_form_alter(&$form, $form_state, $form_id) {
     $form['settings']['active_tags'] = array(
       '#type' => 'checkbox',
       '#title' => t('Active Tags'),
-      '#default_value' => variable_get('active_tags_'.$form['vid']['#value'], 0),
+      '#default_value' => (isset($form['vid'])) ? variable_get('active_tags_'.$form['vid']['#value'], 0) : 0,
       '#description' => t('Swaps this vocabulary widget for an enhanced tag field if browser supports javascript.'), 
     );
     $form['#submit'][] = 'active_tags_form_vocabulary_submit';
