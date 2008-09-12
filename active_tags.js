@@ -4,6 +4,7 @@ function activetags_activate(context) {
   if ($(context).length == 1) { 
     var tagarea = activetags_widget(context);
     $(context).before(tagarea); 
+    Drupal.behaviors.autocomplete(document);
   }
   $('.add-tag:not(.tag-processed)').click(function() { 
     activetags_add(context, $(this).prev().val());
@@ -28,6 +29,9 @@ function activetags_activate(context) {
 
 function activetags_check_enter(event) {
   if (event.keyCode == 13) {
+    $('#autocomplete').each(function () {
+      this.owner.hidePopup();
+    })
     $(this).next().click();
     event.preventDefault();
     return false;
@@ -59,11 +63,14 @@ function activetags_update(context) {
 }
 
 function activetags_widget(context) {
+  var vid = context.substr(20,1);
   return '<div id="'+context+'-activetags" class="form-item">'+
     '<label for="'+context+'-edit-tags">'+ $(context + ' label').text() +'</label>'+  
     '<div class="tag-holder"></div>'+ 
-    '<input type="text" class="tag-entry" size="30" id="'+context+'-edit-tags" />'+ 
+    '<input type="text" class="tag-entry form-autocomplete" size="30" id="active-tag-edit0'+vid+'" />'+ 
     '<input type="button" value="add" class="add-tag">'+
+    '<input class="autocomplete" type="hidden" id="active-tag-edit0'+vid+'-autocomplete" '+
+    'value="'+Drupal.settings.basePath+'taxonomy/autocomplete/'+vid+'" disabled="disabled" />'+
   '</div>';
 }
 
