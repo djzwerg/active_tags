@@ -1,0 +1,8 @@
+; $Id$
+
+name = Active Tags
+description = Enhanced tag widget for free tagging vocabularies
+dependencies[] = taxonomy
+package = User interface
+core = 6.x
+
