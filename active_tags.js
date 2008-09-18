@@ -7,7 +7,11 @@ function activetags_activate(context) {
     Drupal.behaviors.autocomplete(document);
   }
   $('.add-tag:not(.tag-processed)').click(function() { 
-    activetags_add(context, $(this).prev().val());
+    jQuery.each($(this).prev().val().split(','), function (i, v) { 
+      if (jQuery.trim(v) != '') {
+        activetags_add(context, v);
+      }
+    }); 
     activetags_update(context);  
     $(this).prev().val('');
   }).addClass('tag-processed');
