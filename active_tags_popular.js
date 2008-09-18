@@ -21,7 +21,7 @@ function activetags_popular_activate(context) {
       $(context).next().children('.tag-popular').children().filter(function (index) {
         return str.indexOf($(this).text()) >= 0;
       }).parent().remove();
-      $(context).next().children('.tag-popular').children().click(function () {
+      $(context).next().children('.tag-popular').children('.add-tag-popular').click(function () {
         activetags_add(context, $(this).prev().text());
         activetags_update(context);  
         $(this).parent().remove();
