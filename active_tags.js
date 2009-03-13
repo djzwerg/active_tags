@@ -69,7 +69,7 @@ function activetags_update(context) {
 }
 
 function activetags_widget(context) {
-  var vid = context.substr(20,1);
+  var vid = context.substring(20,context.lastIndexOf('-'));
   return '<div id="' + context + '-activetags" class="form-item">' +
     '<label for="' + context + '-edit-tags">' + $(context + ' label').text() + '</label>' +
     '<div class="tag-holder"></div>' +
