@@ -77,6 +77,7 @@ function activetags_widget(context) {
     '<input type="button" value="add" class="add-tag">' +
     '<input class="autocomplete" type="hidden" id="active-tag-edit0' + vid + '-autocomplete" ' +
     'value="' + Drupal.settings.basePath + 'taxonomy/autocomplete/' + vid + '" disabled="disabled" />' +
+    '<div class="description">' + $(context + ' .description').text() + '</div>' +
   '</div>';
 }
 
