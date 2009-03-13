@@ -6,16 +6,21 @@
  * Adds popular terms to Active Tags widget
  */
 
-function active_tags_popular_init() {
-  if (arg(2) == 'edit' || arg(1) == 'add') {
-    $settings = array();
-    foreach (taxonomy_get_vocabularies() as $id => $values) {
-      if (variable_get('active_tags_popular_'. $id, 0) == 1) {
-        $settings[] = "#edit-taxonomy-tags-$id-wrapper";
-      }
-    }
+
+/**
+ * Attaches active_tags widget to fields.
+ *
+ * @param $field_ids
+ *  mixed - Either a single field id or an array of ids.
+ */
+function active_tags_popular_enable_widget($field_ids) {
+  // Load id into array if a string is passed in.
+  if ($field_ids && !is_array($field_ids)) {
+    $field_ids = array($field_ids);
+  }
+  if (!empty($field_ids)) {
     $callback = base_path() .'taxonomy/active-tags-popular';
-    drupal_add_js(array('active_tags_popular' => $settings, 'active_tags_popular_callback' => $callback), 'setting');
+    drupal_add_js(array('active_tags_popular' => $field_ids, 'active_tags_popular_callback' => $callback), 'setting');
     drupal_add_js(drupal_get_path('module', 'active_tags_popular') .'/active_tags_popular.js', 'module');
   }
 }
@@ -30,10 +35,15 @@ function active_tags_popular_menu() {
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,
   );
-
   return $items;
 }
 
+/**
+ * Gets popular terms from the database for AJAX callback.
+ *
+ * @param $vid
+ *  Vocabulary id.
+ */
 function active_tags_popular_callback($vid) {
   $matches = array();
   $result = db_query_range(db_rewrite_sql("SELECT t.tid, t.name FROM {term_data} t WHERE t.vid = %d GROUP BY t.name ORDER BY COUNT(t.name) DESC", 't', 'tid'), $vid, 0, variable_get('active_tags_popular_no_'. $vid, 10));
@@ -53,7 +63,7 @@ function active_tags_popular_callback($vid) {
  * Implementation of hook_form_alter().
  */
 function active_tags_popular_form_alter(&$form, $form_state, $form_id) {
-  if ($form_id == 'taxonomy_form_vocabulary') {
+  if ($form_id === 'taxonomy_form_vocabulary') {
     $form['settings']['active_tags_popular'] = array(
       '#type' => 'checkbox',
       '#title' => t('Active Tags Helper - Popular'),
@@ -69,6 +79,19 @@ function active_tags_popular_form_alter(&$form, $form_state, $form_id) {
       '#default_value' => (isset($form['vid'])) ? variable_get('active_tags_popular_no_'. $form['vid']['#value'], 10) : 10,
     );
     $form['#submit'][] = 'active_tags_popular_form_vocabulary_submit';
+  }
+
+  if ($form['#id'] === 'node-form') {
+    $settings = array();
+    foreach (taxonomy_get_vocabularies() as $id => $values) {
+      if (variable_get('active_tags_popular_'. $id, 0) == 1) {
+        $settings[] = "#edit-taxonomy-tags-$id-wrapper";
+      }
+    }
+    // Only load files if we found active tags popular enabled fields.
+    if (!empty($settings)) {
+      active_tags_popular_enable_widget($settings);
+    }
   }
 }
 
