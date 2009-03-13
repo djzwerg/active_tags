@@ -12,7 +12,7 @@ function active_tags_popular_init() {
     foreach (taxonomy_get_vocabularies() as $id => $values) {
       if (variable_get('active_tags_popular_'. $id, 0) == 1) {
         $settings[] = "#edit-taxonomy-tags-$id-wrapper";
-      } 
+      }
     }
     $callback = base_path() .'taxonomy/active-tags-popular';
     drupal_add_js(array('active_tags_popular' => $settings, 'active_tags_popular_callback' => $callback), 'setting');
@@ -49,26 +49,32 @@ function active_tags_popular_callback($vid) {
   drupal_json($matches);
 }
 
-function active_tags_popular_form_alter(&$form, $form_state, $form_id) { 
+/**
+ * Implementation of hook_form_alter().
+ */
+function active_tags_popular_form_alter(&$form, $form_state, $form_id) {
   if ($form_id == 'taxonomy_form_vocabulary') {
     $form['settings']['active_tags_popular'] = array(
       '#type' => 'checkbox',
       '#title' => t('Active Tags Helper - Popular'),
       '#weight' => 11,
       '#default_value' => (isset($form['vid'])) ? variable_get('active_tags_popular_'. $form['vid']['#value'], 0) : 0,
-      '#description' => t('Adds additional helpers to the active tags widget to assist in adding popular tags to posts'), 
+      '#description' => t('Adds additional helpers to the active tags widget to assist in adding popular tags to posts'),
     );
     $form['settings']['active_tags_popular_no'] = array(
       '#type' => 'textfield',
       '#title' => t('Number of popular tags to show'),
       '#weight' => 12,
-      '#size' => 20, 
+      '#size' => 20,
       '#default_value' => (isset($form['vid'])) ? variable_get('active_tags_popular_no_'. $form['vid']['#value'], 10) : 10,
     );
     $form['#submit'][] = 'active_tags_popular_form_vocabulary_submit';
-  } 
+  }
 }
 
+/**
+ * Saves settings from taxonomy vocabulary form.
+ */
 function active_tags_popular_form_vocabulary_submit($form, &$form_state) {
   variable_set('active_tags_popular_'. $form_state['values']['vid'], $form_state['values']['active_tags_popular']);
   variable_set('active_tags_popular_no_'. $form_state['values']['vid'], $form_state['values']['active_tags_popular_no']);
