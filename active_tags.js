@@ -73,10 +73,10 @@ function activetags_widget(context) {
   return '<div id="' + context + '-activetags" class="form-item">' +
     '<label for="' + context + '-edit-tags">' + $(context + ' label').text() + '</label>' +
     '<div class="tag-holder"></div>' +
-    '<input type="text" class="tag-entry form-autocomplete" size="30" id="active-tag-edit0'+vid+'" />' +
+    '<input type="text" class="tag-entry form-autocomplete" size="30" id="active-tag-edit0' + vid + '" />' +
     '<input type="button" value="add" class="add-tag">' +
     '<input class="autocomplete" type="hidden" id="active-tag-edit0' + vid + '-autocomplete" ' +
-    'value="' + Drupal.settings.basePath + 'taxonomy/autocomplete/' + vid + '" disabled="disabled" />' +
+    'value="' + $(context).parent().find('input.autocomplete').val() + '" disabled="disabled" />' +
     '<div class="description">' + $(context + ' .description').text() + '</div>' +
   '</div>';
 }
