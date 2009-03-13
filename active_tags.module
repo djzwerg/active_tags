@@ -3,10 +3,15 @@
 
 /**
  * @file
- * Active Tags widget for free tagging taxonomies
+ *  Active Tags widget for free tagging taxonomies
  */
 
-
+/**
+ * Attaches active_tags widget to fields.
+ *
+ * @param $field_ids
+ *  mixed - Either a single field id or an array of ids.
+ */
 function active_tags_enable_widget($field_ids) {
   // Load id into array if a string is passed in.
   if ($field_ids && !is_array($field_ids)) {
@@ -19,8 +24,11 @@ function active_tags_enable_widget($field_ids) {
   }
 }
 
+/**
+ * Implementation of hook_form_alter.
+ */
 function active_tags_form_alter(&$form, $form_state, $form_id) {
-  if ($form_id == 'taxonomy_form_vocabulary') {
+  if ($form_id === 'taxonomy_form_vocabulary') {
     $form['settings']['active_tags'] = array(
       '#type' => 'checkbox',
       '#title' => t('Active Tags'),
@@ -38,13 +46,16 @@ function active_tags_form_alter(&$form, $form_state, $form_id) {
         $settings[] = "#edit-taxonomy-tags-$id-wrapper";
       }
     }
-    // Only load files if we found active tags enabled fields
+    // Only load files if we found active tags enabled fields.
     if (!empty($settings)) {
       active_tags_enable_widget($settings);
     }
   }
 }
 
+/**
+ * Stores active_tags settings from taxonomy vocabulary form.
+ */
 function active_tags_form_vocabulary_submit($form, &$form_state) {
   variable_set('active_tags_'. $form_state['values']['vid'], $form_state['values']['active_tags']);
   return TRUE;
