@@ -35,7 +35,7 @@ function activetags_popular_activate(context) {
 }
 
 function activetags_popular_widget(context,tags) {
-  var content = '<div class="pop-tags">Add popular tags: ';
+  var content = '<div class="pop-tags">' + Drupal.t('Add popular tags: ');
   jQuery.each(tags, function (i, v) {
     tagitem = '<div class="tag-popular"><span class="tag-text">' + v + '</span><span class="add-tag-popular">+</span></div>';
     content = content + tagitem;
