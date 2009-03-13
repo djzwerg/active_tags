@@ -9,37 +9,37 @@
 
 function active_tags_enable_widget($field_ids) {
   // Load id into array if a string is passed in.
-  if ($field_ids && ! is_array($field_ids)) {
+  if ($field_ids && !is_array($field_ids)) {
     $field_ids = array($field_ids);
   }
-  if ( ! empty($field_ids)) {
+  if (!empty($field_ids)) {
     drupal_add_css(drupal_get_path('module', 'active_tags') .'/active_tags.css', 'module');
     drupal_add_js(array('active_tags' => $field_ids), 'setting');
     drupal_add_js(drupal_get_path('module', 'active_tags') .'/active_tags.js', 'module');
   }
 }
- 
-function active_tags_form_alter(&$form, $form_state, $form_id) { 
+
+function active_tags_form_alter(&$form, $form_state, $form_id) {
   if ($form_id == 'taxonomy_form_vocabulary') {
     $form['settings']['active_tags'] = array(
       '#type' => 'checkbox',
       '#title' => t('Active Tags'),
       '#weight' => 10,
       '#default_value' => (isset($form['vid'])) ? variable_get('active_tags_'. $form['vid']['#value'], 0) : 0,
-      '#description' => t('Swaps this vocabulary widget for an enhanced tag field if browser supports javascript.'), 
+      '#description' => t('Swaps this vocabulary widget for an enhanced tag field if browser supports javascript.'),
     );
     $form['#submit'][] = 'active_tags_form_vocabulary_submit';
   }
-  
+
   if ($form['#id'] === 'node-form') {
     $settings = array();
     foreach (taxonomy_get_vocabularies($form['type']['#value']) as $id => $values) {
       if (variable_get('active_tags_'. $id, 0) == 1) {
         $settings[] = "#edit-taxonomy-tags-$id-wrapper";
-      } 
+      }
     }
     // Only load files if we found active tags enabled fields
-    if ( ! empty($settings)) {
+    if (!empty($settings)) {
       active_tags_enable_widget($settings);
     }
   }
