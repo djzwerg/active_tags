@@ -76,7 +76,7 @@ function activetags_widget(context) {
     '<input type="text" class="tag-entry form-autocomplete" size="30" id="active-tag-edit0' + vid + '" />' +
     '<input type="button" value="add" class="add-tag">' +
     '<input class="autocomplete" type="hidden" id="active-tag-edit0' + vid + '-autocomplete" ' +
-    'value="' + $(context).parent().find('input.autocomplete').val() + '" disabled="disabled" />' +
+    'value="' + $(context.replace('-wrapper', '-autocomplete')).val() + '" disabled="disabled" />' +
     '<div class="description">' + $(context + ' .description').text() + '</div>' +
   '</div>';
 }
