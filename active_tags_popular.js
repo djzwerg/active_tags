@@ -10,7 +10,7 @@ Drupal.behaviors.taggerpop = function (context) {
 }
 
 function activetags_popular_activate(context) {
-  var vid = context.substr(20,1);
+  var vid = context.substring(20,context.lastIndexOf('-'));
   $.ajax({
     type: "GET",
     url: Drupal.settings['active_tags_popular_callback'] + '/' + vid,
