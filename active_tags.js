@@ -74,7 +74,7 @@ function activetags_widget(context) {
     '<label for="' + context + '-edit-tags">' + $(context + ' label').text() + '</label>' +
     '<div class="tag-holder"></div>' +
     '<input type="text" class="tag-entry form-autocomplete" size="30" id="active-tag-edit0' + vid + '" />' +
-    '<input type="button" value="add" class="add-tag">' +
+    '<input type="button" value="' + Drupal.t('add') + '" class="add-tag">' +
     '<input class="autocomplete" type="hidden" id="active-tag-edit0' + vid + '-autocomplete" ' +
     'value="' + $(context.replace('-wrapper', '-autocomplete')).val() + '" disabled="disabled" />' +
     '<div class="description">' + $(context + ' .description').text() + '</div>' +
