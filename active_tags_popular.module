@@ -46,7 +46,7 @@ function active_tags_popular_menu() {
  */
 function active_tags_popular_callback($vid) {
   $matches = array();
-  $result = db_query_range(db_rewrite_sql("SELECT t.tid, t.name, COUNT(tn.tid) AS term_count FROM term_data t INNER JOIN term_node tn ON t.tid = tn.tid INNER JOIN node n ON tn.vid = n.vid WHERE t.vid = %d GROUP BY t.tid, t.name ORDER BY term_count DESC", 't', 'tid'), $vid, 0, variable_get('active_tags_popular_no_'. $vid, 10));
+  $result = db_query_range(db_rewrite_sql("SELECT t.tid, t.name, COUNT(tn.tid) AS term_count FROM {term_data} t INNER JOIN {term_node} tn ON t.tid = tn.tid INNER JOIN {node} n ON tn.vid = n.vid WHERE t.vid = %d GROUP BY t.tid, t.name ORDER BY term_count DESC", 't', 'tid'), $vid, 0, variable_get('active_tags_popular_no_'. $vid, 10));
   while ($tag = db_fetch_object($result)) {
     $n = $tag->name;
     // Commas and quotes in terms are special cases, so encode 'em.
