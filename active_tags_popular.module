@@ -19,7 +19,7 @@ function active_tags_popular_enable_widget($field_ids) {
     $field_ids = array($field_ids);
   }
   if (!empty($field_ids)) {
-    $callback = base_path() .'taxonomy/active-tags-popular';
+    $callback = url('taxonomy/active-tags-popular');
     drupal_add_js(array('active_tags_popular' => $field_ids, 'active_tags_popular_callback' => $callback), 'setting');
     drupal_add_js(drupal_get_path('module', 'active_tags_popular') .'/active_tags_popular.js', 'module');
   }
