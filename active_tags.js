@@ -1,39 +1,39 @@
 // $Id$
 
-function activetags_activate(context) {
+function active_tags_activate(context) {
   var wrapper = $(context);
   if (wrapper.length == 1) {
-    var tagarea = activetags_widget(context);
+    var tagarea = active_tags_widget(context);
     wrapper.before(tagarea);
     Drupal.behaviors.autocomplete(document);
   }
   $('.add-tag:not(.tag-processed)').click(function() {
     jQuery.each($(this).prev().val().split(','), function(i, v) {
       if (jQuery.trim(v) != '') {
-        activetags_add(context, v);
+        active_tags_add(context, v);
       }
     });
-    activetags_update(context);
+    active_tags_update(context);
     $(this).prev().val('');
   }).addClass('tag-processed');
 
   if ($.browser.mozilla) {
-    $('.tag-entry:not(.tag-processed)').keypress(activetags_check_enter).addClass('tag-processed');
+    $('.tag-entry:not(.tag-processed)').keypress(active_tags_check_enter).addClass('tag-processed');
   }
   else {
-    $('.tag-entry:not(.tag-processed)').keydown(activetags_check_enter).addClass('tag-processed');
+    $('.tag-entry:not(.tag-processed)').keydown(active_tags_check_enter).addClass('tag-processed');
   }
 
   jQuery.each(wrapper.find('input.form-text').attr('value').split(','), function(i, v) {
     if (jQuery.trim(v) != '') {
-      activetags_add(context, v);
+      active_tags_add(context, v);
     }
   });
 
   wrapper.hide();
 }
 
-function activetags_check_enter(event) {
+function active_tags_check_enter(event) {
   if (event.keyCode == 13) {
     $('#autocomplete').each(function() {
       this.owner.hidePopup();
@@ -44,18 +44,18 @@ function activetags_check_enter(event) {
   }
 }
 
-function activetags_add(context, v) {
+function active_tags_add(context, v) {
   if (jQuery.trim(v) != '') {
     $(context).prev().children('.tag-holder').append('<div class="tag-tag"><span class="tag-text">' +
       jQuery.trim(v) + '</span><span class="remove-tag">x</span></div>');
     $('.remove-tag:not(.tag-processed)').click(function() {
       $(this).parent().remove();
-      activetags_update(context);
+      active_tags_update(context);
     }).addClass('tag-processed');
   }
 }
 
-function activetags_update(context) {
+function active_tags_update(context) {
   var wrapper = $(context);
   var text_fields = wrapper.children('input.form-text');
   text_fields.val('');
@@ -69,10 +69,10 @@ function activetags_update(context) {
   });
 }
 
-function activetags_widget(context) {
+function active_tags_widget(context) {
   var vid = context.substring(20,context.lastIndexOf('-'));
   var wrapper = $(context);
-  return '<div id="' + context + '-activetags" class="form-item">' +
+  return '<div id="' + context + '-active_tags" class="form-item">' +
     '<label for="' + context + '-edit-tags">' + wrapper.find('label').text() + '</label>' +
     '<div class="tag-holder"></div>' +
     '<input type="text" class="tag-entry form-autocomplete" size="30" id="active-tag-edit0' + vid + '" />' +
@@ -87,7 +87,7 @@ Drupal.behaviors.tagger = function(context) {
   jQuery.each(Drupal.settings['active_tags'], function(i, v) {
     var wrapper = $(v);
     if (wrapper.length == 1 && !wrapper.hasClass('active-tags-processed')) {
-      activetags_activate(v);
+      active_tags_activate(v);
       wrapper.addClass('active-tags-processed');
     }
   });
