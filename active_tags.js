@@ -1,13 +1,14 @@
 // $Id$
 
 function activetags_activate(context) {
-  if ($(context).length == 1) {
+  var wrapper = $(context);
+  if (wrapper.length == 1) {
     var tagarea = activetags_widget(context);
-    $(context).before(tagarea);
+    wrapper.before(tagarea);
     Drupal.behaviors.autocomplete(document);
   }
   $('.add-tag:not(.tag-processed)').click(function() {
-    jQuery.each($(this).prev().val().split(','), function (i, v) {
+    jQuery.each($(this).prev().val().split(','), function(i, v) {
       if (jQuery.trim(v) != '') {
         activetags_add(context, v);
       }
@@ -23,18 +24,18 @@ function activetags_activate(context) {
     $('.tag-entry:not(.tag-processed)').keydown(activetags_check_enter).addClass('tag-processed');
   }
 
-  jQuery.each($(context + ' input.form-text').attr('value').split(','), function (i, v) {
+  jQuery.each(wrapper.find('input.form-text').attr('value').split(','), function(i, v) {
     if (jQuery.trim(v) != '') {
       activetags_add(context, v);
     }
   });
 
-  $(context).hide();
+  wrapper.hide();
 }
 
 function activetags_check_enter(event) {
   if (event.keyCode == 13) {
-    $('#autocomplete').each(function () {
+    $('#autocomplete').each(function() {
       this.owner.hidePopup();
     })
     $(this).next().click();
@@ -55,37 +56,39 @@ function activetags_add(context, v) {
 }
 
 function activetags_update(context) {
-  $(context).children('input.form-text').val('');
-  $(context).prev().children('.tag-holder').children().children('.tag-text').each(function(i) {
-    if(i==0) {
-      $(context).children('input.form-text').val($(this).text());
+  var wrapper = $(context);
+  var text_fields = wrapper.children('input.form-text');
+  text_fields.val('');
+  wrapper.prev().children('.tag-holder').children().children('.tag-text').each(function(i) {
+    if (i == 0) {
+      text_fields.val($(this).text());
     }
     else {
-      $(context).children('input.form-text').val(
-        $(context).children('input.form-text').val() + ', ' + $(this).text()
-      );
+      text_fields.val(text_fields.val() + ', ' + $(this).text());
     }
   });
 }
 
 function activetags_widget(context) {
   var vid = context.substring(20,context.lastIndexOf('-'));
+  var wrapper = $(context);
   return '<div id="' + context + '-activetags" class="form-item">' +
-    '<label for="' + context + '-edit-tags">' + $(context + ' label').text() + '</label>' +
+    '<label for="' + context + '-edit-tags">' + wrapper.find('label').text() + '</label>' +
     '<div class="tag-holder"></div>' +
     '<input type="text" class="tag-entry form-autocomplete" size="30" id="active-tag-edit0' + vid + '" />' +
     '<input type="button" value="' + Drupal.t('add') + '" class="add-tag">' +
     '<input class="autocomplete" type="hidden" id="active-tag-edit0' + vid + '-autocomplete" ' +
     'value="' + $(context.replace('-wrapper', '-autocomplete')).val() + '" disabled="disabled" />' +
-    '<div class="description">' + $(context + ' .description').text() + '</div>' +
+    '<div class="description">' + wrapper.find('.description').text() + '</div>' +
   '</div>';
 }
 
-Drupal.behaviors.tagger = function (context) {
+Drupal.behaviors.tagger = function(context) {
   jQuery.each(Drupal.settings['active_tags'], function(i, v) {
-    if ($(v).length == 1 && !$(v).hasClass('active-tags-processed')) {
+    var wrapper = $(v);
+    if (wrapper.length == 1 && !wrapper.hasClass('active-tags-processed')) {
       activetags_activate(v);
-      $(v).addClass('active-tags-processed');
+      wrapper.addClass('active-tags-processed');
     }
   });
 }
