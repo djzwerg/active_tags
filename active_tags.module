@@ -40,17 +40,25 @@ function active_tags_form_alter(&$form, $form_state, $form_id) {
   }
 
   if ($form['#id'] === 'node-form') {
-    $settings = array();
-    foreach (taxonomy_get_vocabularies($form['type']['#value']) as $id => $values) {
-      if (variable_get('active_tags_'. $id, 0) == 1) {
-        $settings[] = "#edit-taxonomy-tags-$id-wrapper";
-      }
-    }
-    // Only load files if we found active tags enabled fields.
-    if (!empty($settings)) {
-      active_tags_enable_widget($settings);
+    $form['#after_build'][] = 'active_tags_node_form_attach';
+  }
+}
+
+/**
+ * Enables Active Tags for core taxonomy tag vocabularies.
+ */
+function active_tags_node_form_attach($form) {
+  $settings = array();
+  foreach ($form['taxonomy']['tags'] as $id => $values) {
+    if (variable_get('active_tags_'. $id, 0) == 1) {
+      $settings[] = "#edit-taxonomy-tags-$id-wrapper";
     }
   }
+  // Only load files if we found active tags enabled fields.
+  if (!empty($settings)) {
+    active_tags_enable_widget($settings);
+  }
+  return $form;
 }
 
 /**
