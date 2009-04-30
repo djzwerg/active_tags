@@ -46,8 +46,7 @@ function active_tags_check_enter(event) {
 
 function active_tags_add(context, v) {
   if (jQuery.trim(v) != '') {
-    $(context).prev().children('.tag-holder').append('<div class="tag-tag"><span class="tag-text">' +
-      jQuery.trim(v) + '</span><span class="remove-tag">x</span></div>');
+    $(context).prev().children('.tag-holder').append(Drupal.theme('activeTagsTerm', v));
     $('.remove-tag:not(.tag-processed)').click(function() {
       $(this).parent().remove();
       active_tags_update(context);
@@ -70,18 +69,33 @@ function active_tags_update(context) {
 }
 
 function active_tags_widget(context) {
-  var vid = context.substring(20,context.lastIndexOf('-'));
+  var vid = context.substring(20, context.lastIndexOf('-'));
+  return Drupal.theme('activeTagsWidget', context, vid);
+}
+
+
+/**
+ * Theme a selected term.
+ */
+Drupal.theme.prototype.activeTagsTerm = function(value) {
+  return '<div class="tag-tag"><span class="tag-text">' + value + '</span><span class="remove-tag">x</span></div>';
+};
+
+/**
+ * Theme Active Tags widget.
+ */
+Drupal.theme.prototype.activeTagsWidget = function(context, vid) {
   var wrapper = $(context);
-  return '<div id="' + context + '-active_tags" class="form-item">' +
+  return '<div id="' + context + '-activetags" class="form-item">' +
     '<label for="' + context + '-edit-tags">' + wrapper.find('label').text() + '</label>' +
     '<div class="tag-holder"></div>' +
     '<input type="text" class="tag-entry form-autocomplete" size="30" id="active-tag-edit0' + vid + '" />' +
-    '<input type="button" value="' + Drupal.t('add') + '" class="add-tag">' +
+    '<input type="button" value="add" class="add-tag">' +
     '<input class="autocomplete" type="hidden" id="active-tag-edit0' + vid + '-autocomplete" ' +
     'value="' + $(context.replace('-wrapper', '-autocomplete')).val() + '" disabled="disabled" />' +
     '<div class="description">' + wrapper.find('.description').text() + '</div>' +
   '</div>';
-}
+};
 
 Drupal.behaviors.tagger = function(context) {
   jQuery.each(Drupal.settings['active_tags'], function(i, v) {

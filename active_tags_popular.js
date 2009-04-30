@@ -18,7 +18,7 @@ function active_tags_popular_activate(context) {
     url: Drupal.settings['active_tags_popular_callback'] + '/' + vid,
     dataType: 'json',
     success: function (matches) {
-      var tagarea = active_tags_popular_widget(context, matches);
+      var tagarea = Drupal.theme('activeTagPopular', context, matches);
       wrapper.after(tagarea);
       var str = wrapper.find('input.form-text').val();
       var pop_tags = wrapper.next().children('.tag-popular');
@@ -37,11 +37,14 @@ function active_tags_popular_activate(context) {
   });
 }
 
-function active_tags_popular_widget(context, tags) {
+/**
+ * Theme a popular tag.
+ */
+Drupal.theme.prototype.activeTagPopular = function(context, tags) {
   var content = '<div class="pop-tags">' + Drupal.t('Add popular tags: ');
   jQuery.each(tags, function(i, v) {
     var tagitem = '<div class="tag-popular"><span class="tag-text">' + v + '</span><span class="add-tag-popular">+</span></div>';
     content = content + tagitem;
   });
   return content + '</div>';
-}
+};
