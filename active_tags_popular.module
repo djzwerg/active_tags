@@ -14,13 +14,22 @@
  *  mixed - Either a single field id or an array of ids.
  */
 function active_tags_popular_enable_widget($field_ids) {
+  static $set_ids = array();
   // Load id into array if a string is passed in.
   if ($field_ids && !is_array($field_ids)) {
     $field_ids = array($field_ids);
   }
-  if (!empty($field_ids)) {
+  // Ensure we are only adding each setting once.
+  // This is important when previewing a node.
+  foreach ($field_ids as $id) {
+    if (!in_array($id, $set_ids)) {
+      $ids[] = $id;
+      $set_ids[] = $id;
+    }
+  }
+  if (!empty($ids)) {
     $callback = url('taxonomy/active-tags-popular');
-    drupal_add_js(array('active_tags_popular' => $field_ids, 'active_tags_popular_callback' => $callback), 'setting');
+    drupal_add_js(array('active_tags_popular' => $ids, 'active_tags_popular_callback' => $callback), 'setting');
     drupal_add_js(drupal_get_path('module', 'active_tags_popular') .'/active_tags_popular.js', 'module');
   }
 }
@@ -89,7 +98,7 @@ function active_tags_popular_form_alter(&$form, $form_state, $form_id) {
 /**
  * Enables Active Tags Popular for core taxonomy tag vocabularies.
  */
-function active_tags_popular_node_form_attach($form) {
+function active_tags_popular_node_form_attach($form, $form_state) {
   $settings = array();
   foreach ($form['taxonomy']['tags'] as $id => $values) {
     if (variable_get('active_tags_popular_'. $id, 0) == 1) {

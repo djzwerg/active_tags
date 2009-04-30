@@ -13,13 +13,22 @@
  *  mixed - Either a single field id or an array of ids.
  */
 function active_tags_enable_widget($field_ids) {
+  static $set_ids = array();
   // Load id into array if a string is passed in.
   if ($field_ids && !is_array($field_ids)) {
     $field_ids = array($field_ids);
   }
-  if (!empty($field_ids)) {
+  // Ensure we are only adding each setting once.
+  // This is important when previewing a node.
+  foreach ($field_ids as $id) {
+    if (!in_array($id, $set_ids)) {
+      $ids[] = $id;
+      $set_ids[] = $id;
+    }
+  }
+  if (!empty($ids)) {
     drupal_add_css(drupal_get_path('module', 'active_tags') .'/active_tags.css', 'module');
-    drupal_add_js(array('active_tags' => $field_ids), 'setting');
+    drupal_add_js(array('active_tags' => $ids), 'setting');
     drupal_add_js(drupal_get_path('module', 'active_tags') .'/active_tags.js', 'module');
   }
 }
@@ -47,7 +56,8 @@ function active_tags_form_alter(&$form, $form_state, $form_id) {
 /**
  * Enables Active Tags for core taxonomy tag vocabularies.
  */
-function active_tags_node_form_attach($form) {
+function active_tags_node_form_attach($form, $form_state) {
+  dsm('ran');
   $settings = array();
   foreach ($form['taxonomy']['tags'] as $id => $values) {
     if (variable_get('active_tags_'. $id, 0) == 1) {
@@ -56,7 +66,7 @@ function active_tags_node_form_attach($form) {
   }
   // Only load files if we found active tags enabled fields.
   if (!empty($settings)) {
-    active_tags_enable_widget($settings);
+    active_tags_enable_widget($settings, $form_state['submitted']);
   }
   return $form;
 }
