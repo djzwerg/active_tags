@@ -1,39 +1,39 @@
 // $Id$
 
-function active_tags_activate(context) {
+function activeTagsActivate(context) {
   var wrapper = $(context);
   if (wrapper.length == 1) {
-    var tagarea = active_tags_widget(context);
+    var tagarea = activeTagsWidget(context);
     wrapper.before(tagarea);
     Drupal.behaviors.autocomplete(document);
   }
   $('.add-tag:not(.tag-processed)').click(function() {
     jQuery.each($(this).prev().val().split(','), function(i, v) {
       if (jQuery.trim(v) != '') {
-        active_tags_add(context, v);
+        activeTagsAdd(context, v);
       }
     });
-    active_tags_update(context);
+    activeTagsUpdate(context);
     $(this).prev().val('');
   }).addClass('tag-processed');
 
   if ($.browser.mozilla) {
-    $('.tag-entry:not(.tag-processed)').keypress(active_tags_check_enter).addClass('tag-processed');
+    $('.tag-entry:not(.tag-processed)').keypress(activeTagsCheckEnter).addClass('tag-processed');
   }
   else {
-    $('.tag-entry:not(.tag-processed)').keydown(active_tags_check_enter).addClass('tag-processed');
+    $('.tag-entry:not(.tag-processed)').keydown(activeTagsCheckEnter).addClass('tag-processed');
   }
 
   jQuery.each(wrapper.find('input.form-text').attr('value').split(','), function(i, v) {
     if (jQuery.trim(v) != '') {
-      active_tags_add(context, v);
+      activeTagsAdd(context, v);
     }
   });
 
   wrapper.hide();
 }
 
-function active_tags_check_enter(event) {
+function activeTagsCheckEnter(event) {
   if (event.keyCode == 13) {
     $('#autocomplete').each(function() {
       this.owner.hidePopup();
@@ -44,31 +44,31 @@ function active_tags_check_enter(event) {
   }
 }
 
-function active_tags_add(context, v) {
+function activeTagsAdd(context, v) {
   if (jQuery.trim(v) != '') {
     $(context).prev().children('.tag-holder').append(Drupal.theme('activeTagsTerm', v));
     $('.remove-tag:not(.tag-processed)').click(function() {
       $(this).parent().remove();
-      active_tags_update(context);
+      activeTagsUpdate(context);
     }).addClass('tag-processed');
   }
 }
 
-function active_tags_update(context) {
+function activeTagsUpdate(context) {
   var wrapper = $(context);
-  var text_fields = wrapper.children('input.form-text');
-  text_fields.val('');
+  var textFields = wrapper.children('input.form-text');
+  textFields.val('');
   wrapper.prev().children('.tag-holder').children().children('.tag-text').each(function(i) {
     if (i == 0) {
-      text_fields.val($(this).text());
+      textFields.val($(this).text());
     }
     else {
-      text_fields.val(text_fields.val() + ', ' + $(this).text());
+      textFields.val(textFields.val() + ', ' + $(this).text());
     }
   });
 }
 
-function active_tags_widget(context) {
+function activeTagsWidget(context) {
   var vid = context.substring(20, context.lastIndexOf('-'));
   return Drupal.theme('activeTagsWidget', context, vid);
 }
@@ -101,7 +101,7 @@ Drupal.behaviors.tagger = function(context) {
   jQuery.each(Drupal.settings['active_tags'], function(i, v) {
     var wrapper = $(v);
     if (wrapper.length == 1 && !wrapper.hasClass('active-tags-processed')) {
-      active_tags_activate(v);
+      activeTagsActivate(v);
       wrapper.addClass('active-tags-processed');
     }
   });
