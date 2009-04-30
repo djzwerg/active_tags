@@ -39,7 +39,7 @@ function active_tags_form_alter(&$form, $form_state, $form_id) {
     $form['#submit'][] = 'active_tags_form_vocabulary_submit';
   }
 
-  if ($form['#id'] === 'node-form') {
+  if ($form['#id'] === 'node-form' && isset($form['taxonomy']['tags'])) {
     $form['#after_build'][] = 'active_tags_node_form_attach';
   }
 }
