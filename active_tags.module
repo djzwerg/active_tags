@@ -57,7 +57,6 @@ function active_tags_form_alter(&$form, $form_state, $form_id) {
  * Enables Active Tags for core taxonomy tag vocabularies.
  */
 function active_tags_node_form_attach($form, $form_state) {
-  dsm('ran');
   $settings = array();
   foreach ($form['taxonomy']['tags'] as $id => $values) {
     if (variable_get('active_tags_'. $id, 0) == 1) {
