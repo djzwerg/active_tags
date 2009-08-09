@@ -90,7 +90,7 @@ Drupal.theme.prototype.activeTagsWidget = function(context, vid) {
     '<label for="' + context + '-edit-tags">' + wrapper.find('label').text() + '</label>' +
     '<div class="tag-holder"></div>' +
     '<input type="text" class="tag-entry form-autocomplete" size="30" id="active-tag-edit0' + vid + '" />' +
-    '<input type="button" value="add" class="add-tag">' +
+    '<input type="button" value="' + Drupal.t('Add') + '" class="add-tag">' +
     '<input class="autocomplete" type="hidden" id="active-tag-edit0' + vid + '-autocomplete" ' +
     'value="' + $(context.replace('-wrapper', '-autocomplete')).val() + '" disabled="disabled" />' +
     '<div class="description">' + wrapper.find('.description').text() + '</div>' +
