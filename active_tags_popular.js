@@ -41,10 +41,16 @@ function activeTagsPopularActivate(context) {
  * Theme a popular tag.
  */
 Drupal.theme.prototype.activeTagPopular = function(context, tags) {
-  var content = '<div class="pop-tags">' + Drupal.t('Add popular tags: ');
-  jQuery.each(tags, function(i, v) {
-    var tagitem = '<div class="tag-popular"><span class="tag-text">' + v + '</span><span class="add-tag-popular">+</span></div>';
-    content = content + tagitem;
-  });
-  return content + '</div>';
+  var content = '';
+
+  if (tags.length) {
+    content = '<div class="pop-tags">' + Drupal.t('Add popular tags: ');
+    jQuery.each(tags, function(i, v) {
+      var tagitem = '<div class="tag-popular"><span class="tag-text">' + v + '</span><span class="add-tag-popular">+</span></div>';
+      content += tagitem;
+    });
+    content += '</div>';
+  }
+
+  return content;
 };
