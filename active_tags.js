@@ -86,7 +86,8 @@ Drupal.theme.prototype.activeTagsTerm = function(value) {
  */
 Drupal.theme.prototype.activeTagsWidget = function(context, vid) {
   var wrapper = $(context);
-  return '<div id="' + context + '-activetags" class="form-item">' +
+  var cleanId = context.replace('#', '');
+  return '<div id="' + cleanId + '-activetags" class="form-item">' +
     '<label for="' + context + '-edit-tags">' + wrapper.find('label').text() + '</label>' +
     '<div class="tag-holder"></div>' +
     '<input type="text" class="tag-entry form-autocomplete" size="30" id="active-tag-edit0' + vid + '" />' +
