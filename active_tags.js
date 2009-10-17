@@ -57,7 +57,7 @@ function activeTagsCheckEnter(event) {
     $('#autocomplete').each(function() {
       this.owner.hidePopup();
     })
-    $(this).next().click();
+    $(this).next().mousedown();
     event.preventDefault();
     return false;
   }
@@ -100,6 +100,10 @@ function activeTagsWidget(context) {
   return Drupal.theme('activeTagsWidget', context, vid);
 }
 
+function activeTagsAddTagOnSubmit() {
+  $('.add-tag').click();
+}
+
 /**
  * Theme a selected term.
  */
@@ -113,14 +117,19 @@ Drupal.theme.prototype.activeTagsTerm = function(value) {
 Drupal.theme.prototype.activeTagsWidget = function(context, vid) {
   var wrapper = $(context);
   var cleanId = context.replace('#', '');
+  // Change default taxonomy description to reflect AT style workflow.
+  var desc = wrapper.find('.description').text();
+  if (desc == Drupal.t('A comma-separated list of terms describing this content. Example: funny, bungee jumping, "Company, Inc.".')) {
+    desc = Drupal.t('Enter one(1) term at a time. A comma will be included in the term and will NOT seperate terms.');
+  }
   return '<div id="' + cleanId + '-activetags" class="form-item">' +
     '<label for="' + context + '-edit-tags">' + wrapper.find('label').text() + '</label>' +
     '<div class="tag-holder"></div>' +
     '<input type="text" class="tag-entry form-autocomplete" size="30" id="active-tag-edit0' + vid + '" />' +
-    '<input type="button" value="' + Drupal.t('Add') + '" class="add-tag">' +
+    '<input type="button" value="' + Drupal.t('Add') + '" class="add-tag" />' +
     '<input class="autocomplete" type="hidden" id="active-tag-edit0' + vid + '-autocomplete" ' +
     'value="' + $(context.replace('-wrapper', '-autocomplete')).val() + '" disabled="disabled" />' +
-    '<div class="description">' + wrapper.find('.description').text() + '</div>' +
+    '<div class="description">' + desc + '</div>' +
   '</div>';
 };
 
@@ -133,3 +142,8 @@ Drupal.behaviors.tagger = function(context) {
     }
   });
 }
+
+$(window).load(function() {
+  // Setup tags to be added on form submit.
+  $('#node-form').submit(activeTagsAddTagOnSubmit);
+});
