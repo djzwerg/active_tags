@@ -118,14 +118,16 @@ Drupal.theme.prototype.activeTagsWidget = function(context, vid) {
   var wrapper = $(context);
   var cleanId = context.replace('#', '');
   // Change default taxonomy description to reflect AT style workflow.
-  var desc = wrapper.find('.description').text();
+  var desc = wrapper.find('.description').html();
   if (desc == Drupal.t('A comma-separated list of terms describing this content. Example: funny, bungee jumping, "Company, Inc.".')) {
     desc = Drupal.t('Enter one(1) term at a time. A comma will be included in the term and will NOT seperate terms.');
   }
+  // Check if the field has an error class to add.
+  var error = wrapper.find('input').hasClass('error') ? 'error ' : '';
   return '<div id="' + cleanId + '-activetags" class="form-item">' +
-    '<label for="' + context + '-edit-tags">' + wrapper.find('label').text() + '</label>' +
+    '<label for="' + context + '-edit-tags">' + wrapper.find('label').html() + '</label>' +
     '<div class="tag-holder"></div>' +
-    '<input type="text" class="tag-entry form-autocomplete" size="30" id="active-tag-edit0' + vid + '" />' +
+    '<input type="text" class="' + error + 'tag-entry form-autocomplete" size="30" id="active-tag-edit0' + vid + '" />' +
     '<input type="button" value="' + Drupal.t('Add') + '" class="add-tag" />' +
     '<input class="autocomplete" type="hidden" id="active-tag-edit0' + vid + '-autocomplete" ' +
     'value="' + $(context.replace('-wrapper', '-autocomplete')).val() + '" disabled="disabled" />' +
