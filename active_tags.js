@@ -1,5 +1,53 @@
 // $Id$
 
+/**
+ * @file
+ *
+ */
+
+/**
+ * Fills the suggestion popup with any matches received.
+ *
+ * Overwriting Drupal core's autocomplete.js found function to call
+ * Drupal.attachBehaviors().
+ */
+if (Drupal.jsAC) {
+  Drupal.jsAC.prototype.found = function (matches) {
+    // If no value in the textfield, do not show the popup.
+    if (!this.input.value.length) {
+      return false;
+    }
+
+    // Prepare matches
+    var ul = document.createElement('ul');
+    var ac = this;
+    for (key in matches) {
+      var li = document.createElement('li');
+      $(li)
+        .html('<div>'+ matches[key] +'</div>')
+        .mousedown(function () { ac.select(this); })
+        .mouseover(function () { ac.highlight(this); })
+        .mouseout(function () { ac.unhighlight(this); });
+      li.autocompleteValue = key;
+      $(ul).append(li);
+    }
+
+    // Show popup with matches, if any
+    if (this.popup) {
+      if (ul.childNodes.length > 0) {
+        $(this.popup).empty().append(ul).show();
+      }
+      else {
+        $(this.popup).css({visibility: 'hidden'});
+        this.hidePopup();
+      }
+    }
+
+    // Attach behaviors to new DOM content.
+    Drupal.attachBehaviors(this.popup);
+  };
+}
+
 function activeTagsParseCsv(sep, string) {
   for (var result = string.split(sep = sep || ","), x = result.length - 1, tl; x >= 0; x--) {
     if (result[x].replace(/"\s+$/, '"').charAt(result[x].length - 1) == '"') {
@@ -27,7 +75,7 @@ function activeTagsActivate(context) {
     wrapper.before(tagarea);
     Drupal.behaviors.autocomplete(document);
   }
-  $('.add-tag:not(.tag-processed)').click(function() {
+  $('.add-tag:not(.tag-processed)').click(function () {
     var tag = $(this).prev().val().replace(/["]/g, '');
     if (jQuery.trim(tag) != '') {
       activeTagsAdd(context, tag);
@@ -54,19 +102,27 @@ function activeTagsActivate(context) {
 
 function activeTagsCheckEnter(event) {
   if (event.keyCode == 13) {
-    $('#autocomplete').each(function() {
+    $('#autocomplete').each(function () {
       this.owner.hidePopup();
-    })
-    $(this).next().mousedown();
+    });
+    $(this).next().click();
     event.preventDefault();
     return false;
   }
 }
 
 function activeTagsAdd(context, v) {
-  if (jQuery.trim(v) != '') {
+  $('#autocomplete').each(function () {
+    this.owner.hidePopup();
+  });
+
+  // Removing all HTML tags. Need to wrap in tags for text() to work correctly.
+  v = $('<div>' + v + '</div>').text();
+  v = Drupal.checkPlain(v);
+  v = jQuery.trim(v);
+  if (v != '') {
     $(context).prev().children('.tag-holder').append(Drupal.theme('activeTagsTerm', v));
-    $('.remove-tag:not(.tag-processed)').click(function() {
+    $('.remove-tag:not(.tag-processed)').click(function () {
       $(this).parent().remove();
       activeTagsUpdate(context);
     }).addClass('tag-processed');
@@ -77,9 +133,11 @@ function activeTagsUpdate(context) {
   var wrapper = $(context);
   var textFields = wrapper.children('input.form-text');
   textFields.val('');
-  wrapper.prev().children('.tag-holder').children().children('.tag-text').each(function(i) {
+  wrapper.prev().children('.tag-holder').children().children('.tag-text').each(function (i) {
     // Get tag and revome quotes to prevent doubling
     var tag = $(this).text().replace(/["]/g, '');
+
+    tag = Drupal.checkPlain(tag);
 
     // Wrap in quotes if tag contains a comma.
     if (tag.search(',') != -1) {
@@ -107,14 +165,14 @@ function activeTagsAddTagOnSubmit() {
 /**
  * Theme a selected term.
  */
-Drupal.theme.prototype.activeTagsTerm = function(value) {
+Drupal.theme.prototype.activeTagsTerm = function (value) {
   return '<div class="tag-tag"><span class="tag-text">' + value + '</span><span class="remove-tag">x</span></div>';
 };
 
 /**
  * Theme Active Tags widget.
  */
-Drupal.theme.prototype.activeTagsWidget = function(context, vid) {
+Drupal.theme.prototype.activeTagsWidget = function (context, vid) {
   var wrapper = $(context);
   var cleanId = context.replace('#', '');
   // Change default taxonomy description to reflect AT style workflow.
@@ -135,8 +193,8 @@ Drupal.theme.prototype.activeTagsWidget = function(context, vid) {
   '</div>';
 };
 
-Drupal.behaviors.tagger = function(context) {
-  jQuery.each(Drupal.settings['active_tags'], function(i, v) {
+Drupal.behaviors.activeTagsWidget = function (context) {
+  jQuery.each(Drupal.settings['active_tags'], function (i, v) {
     var wrapper = $(v);
     if (wrapper.length == 1 && !wrapper.hasClass('active-tags-processed')) {
       activeTagsActivate(v);
@@ -145,7 +203,23 @@ Drupal.behaviors.tagger = function(context) {
   });
 }
 
-$(window).load(function() {
+Drupal.behaviors.activeTagsAutocomplete = function (context) {
+  $('li:not(.activeTagsAutocomplete-processed)', context)
+    .addClass('activeTagsAutocomplete-processed')
+    .each(function () {
+      var li = this;
+      $(li).focus(function () {
+        $('#autocomplete').each(function () {
+          this.owner.input.value = $(li).text();
+        });
+      }).mousedown(function () {
+        $('input.add-tag').click();
+        $('input.add-tag').prev().val('');
+      });
+  });
+}
+
+$(window).load(function () {
   // Setup tags to be added on form submit.
   $('#node-form').submit(activeTagsAddTagOnSubmit);
 });
