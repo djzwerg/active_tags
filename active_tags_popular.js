@@ -46,7 +46,7 @@ Drupal.theme.prototype.activeTagPopular = function(context, tags) {
   if (tags.length) {
     content = '<div class="pop-tags">' + Drupal.t('Add popular tags: ');
     jQuery.each(tags, function(i, v) {
-      var tagitem = '<div class="tag-popular"><span class="tag-text">' + v + '</span><span class="add-tag-popular">+</span></div>';
+      var tagitem = '<div class="tag-popular"><span class="tag-text">' + v + '</span><span class="add-tag-popular">+</span></div> ';
       content += tagitem;
     });
     content += '</div>';

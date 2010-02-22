@@ -166,7 +166,7 @@ function activeTagsAddTagOnSubmit() {
  * Theme a selected term.
  */
 Drupal.theme.prototype.activeTagsTerm = function (value) {
-  return '<div class="tag-tag"><span class="tag-text">' + value + '</span><span class="remove-tag">x</span></div>';
+  return '<div class="tag-tag"><span class="tag-text">' + value + '</span><span class="remove-tag">x</span></div> ';
 };
 
 /**
