@@ -183,7 +183,7 @@ Drupal.theme.prototype.activeTagsWidget = function (context, vid) {
   // Check if the field has an error class to add.
   var error = wrapper.find('input').hasClass('error') ? 'error ' : '';
   return '<div id="' + cleanId + '-activetags" class="form-item">' +
-    '<label for="' + context + '-edit-tags">' + wrapper.find('label').html() + '</label>' +
+    '<label for="active-tag-edit0' + vid + '">' + wrapper.find('label').html() + '</label>' +
     '<div class="tag-holder"></div>' +
     '<input type="text" class="' + error + 'tag-entry form-autocomplete" size="30" id="active-tag-edit0' + vid + '" />' +
     '<input type="button" value="' + Drupal.t('Add') + '" class="add-tag" />' +
