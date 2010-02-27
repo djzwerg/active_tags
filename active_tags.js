@@ -137,8 +137,6 @@ function activeTagsUpdate(context) {
     // Get tag and revome quotes to prevent doubling
     var tag = $(this).text().replace(/["]/g, '');
 
-    tag = Drupal.checkPlain(tag);
-
     // Wrap in quotes if tag contains a comma.
     if (tag.search(',') != -1) {
       tag = '"' + tag + '"';
@@ -181,7 +179,7 @@ Drupal.theme.prototype.activeTagsWidget = function (context, vid) {
   var coreStr = Drupal.t('A comma-separated list of terms describing this content. Example: funny, bungee jumping, "Company, Inc.".');
   var atStr   = Drupal.t('Enter one(1) term at a time. A comma will be included in the term and will NOT seperate terms.');
   desc = desc.replace(substr, newstring);
-  
+
   // Check if the field has an error class to add.
   var error = wrapper.find('input').hasClass('error') ? 'error ' : '';
   return '<div id="' + cleanId + '-activetags" class="form-item">' +
