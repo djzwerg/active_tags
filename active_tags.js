@@ -175,11 +175,13 @@ Drupal.theme.prototype.activeTagsTerm = function (value) {
 Drupal.theme.prototype.activeTagsWidget = function (context, vid) {
   var wrapper = $(context);
   var cleanId = context.replace('#', '');
+
   // Change default taxonomy description to reflect AT style workflow.
-  var desc = wrapper.find('.description').html();
-  if (desc == Drupal.t('A comma-separated list of terms describing this content. Example: funny, bungee jumping, "Company, Inc.".')) {
-    desc = Drupal.t('Enter one(1) term at a time. A comma will be included in the term and will NOT seperate terms.');
-  }
+  var desc    = wrapper.find('.description').html();
+  var coreStr = Drupal.t('A comma-separated list of terms describing this content. Example: funny, bungee jumping, "Company, Inc.".');
+  var atStr   = Drupal.t('Enter one(1) term at a time. A comma will be included in the term and will NOT seperate terms.');
+  desc = desc.replace(substr, newstring);
+  
   // Check if the field has an error class to add.
   var error = wrapper.find('input').hasClass('error') ? 'error ' : '';
   return '<div id="' + cleanId + '-activetags" class="form-item">' +
