@@ -178,7 +178,7 @@ Drupal.theme.prototype.activeTagsWidget = function (context, vid) {
   var desc    = wrapper.find('.description').html();
   var coreStr = Drupal.t('A comma-separated list of terms describing this content. Example: funny, bungee jumping, "Company, Inc.".');
   var atStr   = Drupal.t('Enter one(1) term at a time. A comma will be included in the term and will NOT seperate terms.');
-  desc = desc.replace(substr, newstring);
+  desc = desc.replace(coreStr, atStr);
 
   // Check if the field has an error class to add.
   var error = wrapper.find('input').hasClass('error') ? 'error ' : '';
