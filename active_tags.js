@@ -2,7 +2,7 @@
 
 /**
  * @file
- *
+ * Changes taxonomy tags fields to Active Tags style widgets.
  */
 
 /**
