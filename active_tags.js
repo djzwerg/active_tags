@@ -111,17 +111,17 @@ function activeTagsCheckEnter(event) {
   }
 }
 
-function activeTagsAdd(context, v) {
+function activeTagsAdd(context, tag) {
   $('#autocomplete').each(function () {
     this.owner.hidePopup();
   });
 
   // Removing all HTML tags. Need to wrap in tags for text() to work correctly.
-  v = $('<div>' + v + '</div>').text();
-  v = Drupal.checkPlain(v);
-  v = jQuery.trim(v);
-  if (v != '') {
-    $(context).prev().children('.tag-holder').append(Drupal.theme('activeTagsTerm', v));
+  tag = $('<div>' + tag + '</div>').text();
+  tag = Drupal.checkPlain(tag);
+  tag = jQuery.trim(tag);
+  if (tag != '') {
+    $(context).prev().children('.tag-holder').append(Drupal.theme('activeTagsTerm', tag));
     $('.remove-tag:not(.tag-processed)').click(function () {
       $(this).parent().remove();
       activeTagsUpdate(context);
