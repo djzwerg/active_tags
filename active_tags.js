@@ -121,7 +121,7 @@ function activeTagsAdd(context, tag) {
   tag = Drupal.checkPlain(tag);
   tag = jQuery.trim(tag);
   if (tag != '') {
-    $(context).parent().find('.tag-holder').append(Drupal.theme('activeTagsTerm', tag));
+    $(context).prev().find('.tag-holder').append(Drupal.theme('activeTagsTerm', tag));
     $('.remove-tag:not(.tag-processed)').click(function () {
       $(this).parent().remove();
       activeTagsUpdate(context);
@@ -134,7 +134,7 @@ function activeTagsUpdate(context) {
   var textFields = wrapper.children('input.form-text');
   textFields.val('');
   //wrapper.prev().children('.tag-holder').children().children('.tag-text').each(function (i) {
-  wrapper.parent().find('.tag-holder .tag-text').each(function (i) {
+  wrapper.prev().find('.tag-holder .tag-text').each(function (i) {
     // Get tag and revome quotes to prevent doubling
     var tag = $(this).text().replace(/["]/g, '');
 
