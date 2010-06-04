@@ -69,19 +69,21 @@ function active_tags_popular_callback($vid) {
  */
 function active_tags_popular_form_alter(&$form, $form_state, $form_id) {
   if ($form_id === 'taxonomy_form_vocabulary') {
+    unset($form['settings']['active_tags']['#suffix']);
     $form['settings']['active_tags_popular'] = array(
       '#type' => 'checkbox',
       '#title' => t('Active Tags Helper - Popular'),
-      '#weight' => 11,
+      '#weight' => -1,
       '#default_value' => (isset($form['vid'])) ? variable_get('active_tags_popular_'. $form['vid']['#value'], 0) : 0,
       '#description' => t('Adds additional helpers to the active tags widget to assist in adding popular tags to posts'),
     );
     $form['settings']['active_tags_popular_no'] = array(
       '#type' => 'textfield',
       '#title' => t('Number of popular tags to show'),
-      '#weight' => 12,
+      '#weight' => 0,
       '#size' => 20,
       '#default_value' => (isset($form['vid'])) ? variable_get('active_tags_popular_no_'. $form['vid']['#value'], 10) : 10,
+      '#suffix' => '</div>',
     );
     $form['#submit'][] = 'active_tags_popular_form_vocabulary_submit';
   }

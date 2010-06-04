@@ -38,12 +38,16 @@ function active_tags_enable_widget($field_ids) {
  */
 function active_tags_form_alter(&$form, $form_state, $form_id) {
   if ($form_id === 'taxonomy_form_vocabulary') {
+    drupal_add_js(drupal_get_path('module', 'active_tags') . '/active_tags_settings.js');
+    $form['settings']['tags']['#weight'] = -3;
     $form['settings']['active_tags'] = array(
       '#type' => 'checkbox',
       '#title' => t('Active Tags'),
-      '#weight' => 10,
+      '#weight' => -2,
       '#default_value' => (isset($form['vid'])) ? variable_get('active_tags_'. $form['vid']['#value'], 0) : 0,
       '#description' => t('Swaps this vocabulary widget for an enhanced tag field if browser supports javascript.'),
+      '#prefix' => '<div id="active-tags-wrapper">',
+      '#suffix' => '</div>',
     );
     $form['#submit'][] = 'active_tags_form_vocabulary_submit';
   }
