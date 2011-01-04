@@ -38,7 +38,7 @@ function active_tags_enable_widget($field_ids) {
  */
 function active_tags_form_alter(&$form, $form_state, $form_id) {
   if ($form_id === 'taxonomy_form_vocabulary') {
-    drupal_add_js(drupal_get_path('module', 'active_tags') . '/active_tags_settings.js');
+    drupal_add_js(drupal_get_path('module', 'active_tags') . '/active_tags.settings.js');
     $form['settings']['tags']['#weight'] = -3;
     $form['settings']['active_tags'] = array(
       '#type' => 'checkbox',
