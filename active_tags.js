@@ -5,6 +5,48 @@
  * Changes taxonomy tags fields to Active Tags style widgets.
  */
 
+(function ($) {
+
+var activeTags = {};
+
+activeTags.parseCsv = function (sep, string) {
+  for (var result = string.split(sep = sep || ","), x = result.length - 1, tl; x >= 0; x--) {
+    if (result[x].replace(/"\s+$/, '"').charAt(result[x].length - 1) == '"') {
+      if ((tl = result[x].replace(/^\s+"/, '"')).length > 1 && tl.charAt(0) == '"') {
+        result[x] = result[x].replace(/^\s*"|"\s*$/g, '').replace(/""/g, '"');
+      }
+      else if (x) {
+        result.splice(x - 1, 2, [result[x - 1], result[x]].join(sep));
+      }
+      else {
+        result = result.shift().split(sep).concat(result);
+      }
+    }
+    else {
+      result[x].replace(/""/g, '"');
+    }
+  }
+  return result;
+};
+
+activeTags.addTermOnSubmit = function () {
+  $('.at-add-term').click();
+}
+
+
+$(window).load(function () {
+  // Setup tags to be added on form submit.
+  $('#node-form').submit(activeTags.addTagOnSubmit);
+});
+
+})(jQuery);
+
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+
 /**
  * Fills the suggestion popup with any matches received.
  *
@@ -46,26 +88,6 @@ if (Drupal.jsAC) {
     // Attach behaviors to new DOM content.
     Drupal.attachBehaviors(this.popup);
   };
-}
-
-function activeTagsParseCsv(sep, string) {
-  for (var result = string.split(sep = sep || ","), x = result.length - 1, tl; x >= 0; x--) {
-    if (result[x].replace(/"\s+$/, '"').charAt(result[x].length - 1) == '"') {
-      if ((tl = result[x].replace(/^\s+"/, '"')).length > 1 && tl.charAt(0) == '"') {
-        result[x] = result[x].replace(/^\s*"|"\s*$/g, '').replace(/""/g, '"');
-      }
-      else if (x) {
-        result.splice(x - 1, 2, [result[x - 1], result[x]].join(sep));
-      }
-      else {
-        result = result.shift().split(sep).concat(result);
-      }
-    }
-    else {
-      result[x].replace(/""/g, '"');
-    }
-  }
-  return result;
 }
 
 function activeTagsActivate(context, index) {
@@ -157,9 +179,7 @@ function activeTagsWidget(context, index) {
   return Drupal.theme('activeTagsWidget', context, vid, index);
 }
 
-function activeTagsAddTagOnSubmit() {
-  $('.add-tag').click();
-}
+
 
 /**
  * Theme a selected term.
@@ -220,7 +240,4 @@ Drupal.behaviors.activeTagsAutocomplete = function (context) {
   });
 }
 
-$(window).load(function () {
-  // Setup tags to be added on form submit.
-  $('#node-form').submit(activeTagsAddTagOnSubmit);
-});
+

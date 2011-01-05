@@ -1,8 +1,8 @@
 ; $Id$
 
 name = Active Tags
-description = Enhanced tag widget for free tagging vocabularies
+description = Enhanced tag widget for free tagging vocabularies.
 dependencies[] = taxonomy
+dependencies[] = field
 package = User interface
-core = 6.x
-
+core = 7.x

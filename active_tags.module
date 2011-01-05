@@ -33,51 +33,97 @@ function active_tags_enable_widget($field_ids) {
   }
 }
 
-/**
- * Implementation of hook_form_alter.
- */
-function active_tags_form_alter(&$form, $form_state, $form_id) {
-  if ($form_id === 'taxonomy_form_vocabulary') {
-    drupal_add_js(drupal_get_path('module', 'active_tags') . '/active_tags.settings.js');
-    $form['settings']['tags']['#weight'] = -3;
-    $form['settings']['active_tags'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Active Tags'),
-      '#weight' => -2,
-      '#default_value' => (isset($form['vid'])) ? variable_get('active_tags_'. $form['vid']['#value'], 0) : 0,
-      '#description' => t('Swaps this vocabulary widget for an enhanced tag field if browser supports javascript.'),
-      '#prefix' => '<div id="active-tags-wrapper">',
-      '#suffix' => '</div>',
-    );
-    $form['#submit'][] = 'active_tags_form_vocabulary_submit';
-  }
 
-  if ($form['#id'] === 'node-form' && isset($form['taxonomy']['tags'])) {
-    $form['#after_build'][] = 'active_tags_node_form_attach';
-  }
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+
+/**
+ * Implements hook_field_widget_info().
+ */
+function active_tags_field_widget_info() {
+  return array(
+    'active_tags_taxonomy_autocomplete' => array(
+      'label' => t('Active Tags autocomplete term widget (tagging)'),
+      'field types' => array('taxonomy_term_reference'),
+      'settings' => array(
+        'size' => 60,
+        'autocomplete_path' => 'taxonomy/autocomplete',
+      ),
+      'behaviors' => array(
+        'multiple values' => FIELD_BEHAVIOR_CUSTOM,
+      ),
+    ),
+  );
 }
 
 /**
- * Enables Active Tags for core taxonomy tag vocabularies.
+ * Implements hook_field_widget_form().
  */
-function active_tags_node_form_attach($form, $form_state) {
-  $settings = array();
-  foreach ($form['taxonomy']['tags'] as $id => $values) {
-    if (variable_get('active_tags_'. $id, 0) == 1) {
-      $settings[] = "#edit-taxonomy-tags-$id-wrapper";
-    }
+function active_tags_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
+  $tags = array();
+  foreach ($items as $item) {
+    $tags[$item['tid']] = isset($item['taxonomy_term']) ? $item['taxonomy_term'] : taxonomy_term_load($item['tid']);
   }
-  // Only load files if we found active tags enabled fields.
-  if (!empty($settings)) {
-    active_tags_enable_widget($settings, $form_state['submitted']);
-  }
-  return $form;
+  //dpm($element);
+
+  $element += array(
+    '#type' => 'textfield',
+    '#default_value' => taxonomy_implode_tags($tags),
+    '#autocomplete_path' => $instance['widget']['settings']['autocomplete_path'] . '/' . $field['field_name'],
+    '#size' => $instance['widget']['settings']['size'],
+    '#maxlength' => 1024,
+    '#element_validate' => array('taxonomy_autocomplete_validate'),
+    '#field_prefix' => theme('active_tags_term_list_remove', array('terms' => $tags)),
+  );
+
+  drupal_add_css(drupal_get_path('module', 'active_tags') . '/active_tags.css');
+
+  return $element;
 }
 
 /**
- * Stores active_tags settings from taxonomy vocabulary form.
+ * Implements hook_field_widget_error().
  */
-function active_tags_form_vocabulary_submit($form, &$form_state) {
-  variable_set('active_tags_'. $form_state['values']['vid'], $form_state['values']['active_tags']);
-  return TRUE;
+function active_tags_field_widget_error($element, $error, $form, &$form_state) {
+  form_error($element, $error['message']);
+}
+
+/**
+ * Implements hook_theme().
+ */
+function active_tags_theme($existing, $type, $theme, $path) {
+  return array(
+    'active_tags_term_list_remove' => array(
+      'variables' => array('terms' => NULL),
+    ),
+    'active_tags_term_list_add' => array(
+      'variables' => array('terms' => NULL),
+    ),
+  );
+}
+
+/**
+ * Theme a list of taxonomy terms with remove action.
+ */
+function theme_active_tags_term_list_remove($variables) {
+  $output = '<div class="at-term-list">';
+  foreach ($variables['terms'] as $term) {
+    // @todo add field level id for div id to prevent collisions.
+    $output .= '<div id="at-term-' . $term->tid . '" class="at-term"><span class="at-term-text">' . $term->name . '</span><span class="at-term-remove">x</span></div> ';
+  }
+  $output .= '</div>';
+  return $output;
+}
+
+/**
+ * Theme a list of taxonomy terms with remove action.
+ */
+function theme_active_tags_term_list_add($variables) {
+  $output = '';
+  foreach ($variables['terms'] as $term) {
+    $output .= '<div id="at-term-' . $term->tid . '" class="at-term"><span class="at-term-text">' . $term->name . '</span><span class="at-term-remove">x</span></div> ';
+  }
+  return $output;
 }
