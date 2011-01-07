@@ -7,39 +7,6 @@
  */
 
 /**
- * Attaches active_tags widget to fields.
- *
- * @param $field_ids
- *  mixed - Either a single field id or an array of ids.
- */
-function active_tags_enable_widget($field_ids) {
-  static $set_ids = array();
-  // Load id into array if a string is passed in.
-  if ($field_ids && !is_array($field_ids)) {
-    $field_ids = array($field_ids);
-  }
-  // Ensure we are only adding each setting once.
-  // This is important when previewing a node.
-  foreach ($field_ids as $id) {
-    if (!in_array($id, $set_ids)) {
-      $ids[] = $id;
-      $set_ids[] = $id;
-    }
-  }
-  if (!empty($ids)) {
-    drupal_add_css(drupal_get_path('module', 'active_tags') .'/active_tags.css', 'module');
-    drupal_add_js(array('active_tags' => $ids), 'setting');
-    drupal_add_js(drupal_get_path('module', 'active_tags') .'/active_tags.js', 'module', 'footer');
-  }
-}
-
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
-
-/**
  * Implements hook_field_widget_info().
  */
 function active_tags_field_widget_info() {
@@ -66,20 +33,43 @@ function active_tags_field_widget_form(&$form, &$form_state, $field, $instance, 
   foreach ($items as $item) {
     $tags[$item['tid']] = isset($item['taxonomy_term']) ? $item['taxonomy_term'] : taxonomy_term_load($item['tid']);
   }
-  //dpm($element);
+
 
   $element += array(
+    '#type' => 'item',
+  );
+  $element['field_terms'] = array(
+    '#markup' => theme('active_tags_term_list_remove', array('terms' => $tags)),
+  );
+  $element['term_entry'] = array(
     '#type' => 'textfield',
-    '#default_value' => taxonomy_implode_tags($tags),
+    '#default_value' => '',
     '#autocomplete_path' => $instance['widget']['settings']['autocomplete_path'] . '/' . $field['field_name'],
     '#size' => $instance['widget']['settings']['size'],
     '#maxlength' => 1024,
     '#element_validate' => array('taxonomy_autocomplete_validate'),
-    '#field_prefix' => theme('active_tags_term_list_remove', array('terms' => $tags)),
+    '#attributes' => array('class' => array('at-term-entry')),
+    '#theme_wrappers' => array(),
+  );
+  $element['add_button'] = array(
+    '#type' => 'button',
+    '#value' => t('Add'),
+    '#attributes' => array('class' => array('at-add-btn')),
+  );
+  $element['terms'] = array(
+    '#type' => 'textfield',
+    '#default_value' => taxonomy_implode_tags($tags),
+    '#size' => $instance['widget']['settings']['size'],
+    '#maxlength' => 1024,
+    //'#element_validate' => array('taxonomy_autocomplete_validate'),
+    '#attributes' => array('class' => array('at-terms')),
+    //'#theme_wrappers' => array(),
   );
 
   drupal_add_css(drupal_get_path('module', 'active_tags') . '/active_tags.css');
+  drupal_add_js(drupal_get_path('module', 'active_tags') . '/active_tags.js');
 
+  dpm($element);
   return $element;
 }
 
@@ -89,6 +79,37 @@ function active_tags_field_widget_form(&$form, &$form_state, $field, $instance, 
 function active_tags_field_widget_error($element, $error, $form, &$form_state) {
   form_error($element, $error['message']);
 }
+
+/**
+ * Implements hook_field_widget_settings_form().
+ */
+/*
+function active_tags_field_widget_settings_form($field, $instance) {
+  $widget = $instance['widget'];
+  $settings = $widget['settings'];
+
+  if ($widget['type'] == 'text_textfield') {
+    $form['size'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Size of textfield'),
+      '#default_value' => $settings['size'],
+      '#element_validate' => array('_element_validate_integer_positive'),
+      '#required' => TRUE,
+    );
+  }
+  else {
+    $form['rows'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Rows'),
+      '#default_value' => $settings['rows'],
+      '#element_validate' => array('_element_validate_integer_positive'),
+      '#required' => TRUE,
+    );
+  }
+
+  return $form;
+}
+*/
 
 /**
  * Implements hook_theme().

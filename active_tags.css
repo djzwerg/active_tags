@@ -17,15 +17,11 @@
   cursor:pointer;
 }
 
-.tag-popular {
-  background-color:#eee;
-  color:#999;
-  padding:2px;
-  display:inline;
-  margin:2px;
+.at-term-entry {
+  width: 300px;
+  float: left;
 }
-.add-tag-popular {
-  color:green;
-  padding-left:5px;
-  cursor:pointer;
+
+.at-add-btn {
+  margin: 0 10px;
 }
