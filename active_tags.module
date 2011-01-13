@@ -37,6 +37,7 @@ function active_tags_field_widget_form(&$form, &$form_state, $field, $instance, 
 
   $element += array(
     '#type' => 'item',
+    '#markup' => '',
   );
   $element['field_terms'] = array(
     '#markup' => theme('active_tags_term_list_remove', array('terms' => $tags)),
@@ -47,7 +48,7 @@ function active_tags_field_widget_form(&$form, &$form_state, $field, $instance, 
     '#autocomplete_path' => $instance['widget']['settings']['autocomplete_path'] . '/' . $field['field_name'],
     '#size' => $instance['widget']['settings']['size'],
     '#maxlength' => 1024,
-    '#element_validate' => array('taxonomy_autocomplete_validate'),
+    //'#element_validate' => array('taxonomy_autocomplete_validate'),
     '#attributes' => array('class' => array('at-term-entry')),
     '#theme_wrappers' => array(),
   );
@@ -61,7 +62,7 @@ function active_tags_field_widget_form(&$form, &$form_state, $field, $instance, 
     '#default_value' => taxonomy_implode_tags($tags),
     '#size' => $instance['widget']['settings']['size'],
     '#maxlength' => 1024,
-    //'#element_validate' => array('taxonomy_autocomplete_validate'),
+    '#element_validate' => array('taxonomy_autocomplete_validate'),
     '#attributes' => array('class' => array('at-terms')),
     //'#theme_wrappers' => array(),
   );
@@ -132,7 +133,7 @@ function theme_active_tags_term_list_remove($variables) {
   $output = '<div class="at-term-list">';
   foreach ($variables['terms'] as $term) {
     // @todo add field level id for div id to prevent collisions.
-    $output .= '<div id="at-term-' . $term->tid . '" class="at-term"><span class="at-term-text">' . $term->name . '</span><span class="at-term-remove">x</span></div> ';
+    $output .= '<div id="at-term-' . $term->tid . '" class="at-term at-term-remove"><span class="at-term-text">' . $term->name . '</span><span class="at-term-action-remove">x</span></div> ';
   }
   $output .= '</div>';
   return $output;
@@ -144,7 +145,7 @@ function theme_active_tags_term_list_remove($variables) {
 function theme_active_tags_term_list_add($variables) {
   $output = '';
   foreach ($variables['terms'] as $term) {
-    $output .= '<div id="at-term-' . $term->tid . '" class="at-term"><span class="at-term-text">' . $term->name . '</span><span class="at-term-remove">x</span></div> ';
+    $output .= '<div id="at-term-' . $term->tid . '" class="at-term at-term-add"><span class="at-term-text">' . $term->name . '</span><span class="at-term-action-add">x</span></div> ';
   }
   return $output;
 }

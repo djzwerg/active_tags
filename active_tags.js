@@ -34,25 +34,72 @@ activeTags.checkEnter = function (event) {
     $('#autocomplete').each(function () {
       this.owner.hidePopup();
     });
-    $(this).next().click();
+    $(this).parent().find('.at-add-btn').click();
     event.preventDefault();
     return false;
   }
-}
+};
 
 activeTags.addTermOnSubmit = function () {
   $('.at-add-btn').click();
-}
+};
 
-activeTags.addTerm = function () {
-  alert('hello world');
-}
+activeTags.addTerm = function (context, term) {
+  //alert(term);
+  // Hide the autocomplete drop down.
+  $('#autocomplete').each(function () {
+    this.owner.hidePopup();
+  });
+
+  // Removing all HTML tags. Need to wrap in tags for text() to work correctly.
+  term = $('<div>' + term + '</div>').text();
+  term = Drupal.checkPlain(term);
+  term = jQuery.trim(term);
+
+  if (term != '') {
+    var termDiv = $(context);
+    var termList = termDiv.parent().find('.at-term-list');
+    termList.append(Drupal.theme('activeTagsTermRemove', term));
+    // Attach behaviors to new DOM content.
+    Drupal.attachBehaviors(termList);
+    //activeTags.updateFormValue(context);
+    termList.parent().find('.at-term-entry').val('');
+  }
+
+  return false;
+};
+
+activeTags.removeTerm = function (context) {
+  $(context).remove();
+  //activeTags.updateFormValue(context);
+};
+
+activeTags.updateFormValue = function (context) {
+  var tagList = $(context).parent();
+  var textFields = tagList.children('input.form-text');
+  tagList.prev().find('.tag-holder .tag-text').each(function (i) {
+    // Get tag and revome quotes to prevent doubling
+    var tag = $(this).text().replace(/["]/g, '');
+
+    // Wrap in quotes if tag contains a comma.
+    if (tag.search(',') != -1) {
+      tag = '"' + tag + '"';
+    }
+
+    if (i == 0) {
+      textFields.val(tag);
+    }
+    else {
+      textFields.val(textFields.val() + ', ' + tag);
+    }
+  });
+};
 
 /**
  * Theme a selected term.
  */
-Drupal.theme.prototype.activeTagsTerm = function (value) {
-  return '<div class="at-term"><span class="at-term-text">' + value + '</span><span class="at-term-remove">x</span></div> ';
+Drupal.theme.prototype.activeTagsTermRemove = function (term) {
+  return '<div class="at-term at-term-remove"><span class="at-term-text">' + term + '</span><span class="at-term-action-remove">x</span></div> ';
 };
 /*
 Drupal.behaviors.activeTagsAutocomplete = function (context) {
@@ -89,10 +136,26 @@ Drupal.behaviors.activeTagsOnEnter = {
 
 Drupal.behaviors.activeTagsRemove = {
   attach: function (context, settings) {
-    $('div.at-term:not(.activeTagsRemove-processed)', context)
+    $('div.at-term-remove:not(.activeTagsRemove-processed)', context)
       .addClass('activeTagsRemove-processed')
       .each(function () {
-        $(this).click(activeTags.addTerm);
+        $(this).click(function () {
+          activeTags.removeTerm(this);
+        })
+      });
+  }
+};
+
+Drupal.behaviors.activeTagsAdd = {
+  attach: function (context, settings) {
+    $('input.at-add-btn:not(.activeTagsAdd-processed)', context)
+      .addClass('activeTagsAdd-processed')
+      .each(function () {
+        $(this).click(function (e) {
+          var tag = $(this).parent().find('.at-term-entry').val().replace(/["]/g, '');
+          activeTags.addTerm(this, tag);
+          return false;
+        });
       });
   }
 };

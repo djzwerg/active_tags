@@ -9,12 +9,12 @@
   padding:2px;
   display:inline;
   margin:2px;
+  cursor:pointer;
 }
 
-.at-term-remove {
+.at-term-action-remove {
   color:red;
   padding-left:5px;
-  cursor:pointer;
 }
 
 .at-term-entry {
