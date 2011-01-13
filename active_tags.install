@@ -7,17 +7,6 @@
  */
 
 /**
- * Implementation of hook_install().
- */
-function active_tags_install() {
-  // Increase module weight to prevent compatibility issues.
-  $sql = "UPDATE {system}
-          SET weight = 10
-          WHERE name = 'active_tags'";
-  db_query($sql);
-}
-
-/**
  * Implementation of hook_uninstall().
  */
 function active_tags_uninstall() {
