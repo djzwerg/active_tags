@@ -62,7 +62,7 @@ activeTags.addTerm = function (context, term) {
     termList.append(Drupal.theme('activeTagsTermRemove', term));
     // Attach behaviors to new DOM content.
     Drupal.attachBehaviors(termList);
-    //activeTags.updateFormValue(context);
+    activeTags.updateFormValue(termList);
     termList.parent().find('.at-term-entry').val('');
   }
 
@@ -70,29 +70,26 @@ activeTags.addTerm = function (context, term) {
 };
 
 activeTags.removeTerm = function (context) {
-  $(context).remove();
-  //activeTags.updateFormValue(context);
+  var tag = $(context);
+  var termList = tag.parent();
+  tag.remove();
+  activeTags.updateFormValue(termList);
 };
 
-activeTags.updateFormValue = function (context) {
-  var tagList = $(context).parent();
-  var textFields = tagList.children('input.form-text');
-  tagList.prev().find('.tag-holder .tag-text').each(function (i) {
+activeTags.updateFormValue = function (termList) {
+  var tags = '';
+  termList.find('.at-term-text').each(function (i) {
     // Get tag and revome quotes to prevent doubling
     var tag = $(this).text().replace(/["]/g, '');
-
     // Wrap in quotes if tag contains a comma.
     if (tag.search(',') != -1) {
       tag = '"' + tag + '"';
     }
-
-    if (i == 0) {
-      textFields.val(tag);
-    }
-    else {
-      textFields.val(textFields.val() + ', ' + tag);
-    }
+    // Collect tags as a comma seperated list.
+    tags = (i == 0) ? tag : tags + ', ' + tag;
   });
+  // Set comma seperated tags as value of form field.
+  termList.parent().find('input.at-terms').val(tags);
 };
 
 /**

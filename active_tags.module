@@ -58,19 +58,18 @@ function active_tags_field_widget_form(&$form, &$form_state, $field, $instance, 
     '#attributes' => array('class' => array('at-add-btn')),
   );
   $element['terms'] = array(
-    '#type' => 'textfield',
+    '#type' => 'hidden',
     '#default_value' => taxonomy_implode_tags($tags),
     '#size' => $instance['widget']['settings']['size'],
     '#maxlength' => 1024,
     '#element_validate' => array('taxonomy_autocomplete_validate'),
     '#attributes' => array('class' => array('at-terms')),
-    //'#theme_wrappers' => array(),
+    '#theme_wrappers' => array(),
   );
 
   drupal_add_css(drupal_get_path('module', 'active_tags') . '/active_tags.css');
   drupal_add_js(drupal_get_path('module', 'active_tags') . '/active_tags.js');
 
-  dpm($element);
   return $element;
 }
 
