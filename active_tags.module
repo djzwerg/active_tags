@@ -38,6 +38,7 @@ function active_tags_field_widget_form(&$form, &$form_state, $field, $instance, 
   $element += array(
     '#type' => 'item',
     '#markup' => '',
+    '#element_validate' => array('active_tags_taxonomy_autocomplete_validate'),
   );
   $element['field_terms'] = array(
     '#markup' => theme('active_tags_term_list_remove', array('terms' => $tags)),
@@ -48,7 +49,6 @@ function active_tags_field_widget_form(&$form, &$form_state, $field, $instance, 
     '#autocomplete_path' => $instance['widget']['settings']['autocomplete_path'] . '/' . $field['field_name'],
     '#size' => $instance['widget']['settings']['size'],
     '#maxlength' => 1024,
-    //'#element_validate' => array('taxonomy_autocomplete_validate'),
     '#attributes' => array('class' => array('at-term-entry')),
     '#theme_wrappers' => array(),
   );
@@ -62,7 +62,7 @@ function active_tags_field_widget_form(&$form, &$form_state, $field, $instance, 
     '#default_value' => taxonomy_implode_tags($tags),
     '#size' => $instance['widget']['settings']['size'],
     '#maxlength' => 1024,
-    '#element_validate' => array('taxonomy_autocomplete_validate'),
+    //'#element_validate' => array('active_tags_taxonomy_autocomplete_validate'),
     '#attributes' => array('class' => array('at-terms')),
     '#theme_wrappers' => array(),
   );
@@ -78,6 +78,11 @@ function active_tags_field_widget_form(&$form, &$form_state, $field, $instance, 
  */
 function active_tags_field_widget_error($element, $error, $form, &$form_state) {
   form_error($element, $error['message']);
+}
+
+function active_tags_taxonomy_autocomplete_validate($element, &$form_state) {
+  $element['#value'] = $element['terms']['#value'];
+  taxonomy_autocomplete_validate($element, $form_state);
 }
 
 /**
