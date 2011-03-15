@@ -139,7 +139,6 @@ Drupal.behaviors.activeTagsAdd = {
       .each(function () {
         $(this).click(function (e) {
           var tag = $(this).parent().find('.at-term-entry').val().replace(/["]/g, '');
-          alert(Drupal.settings.activeTags.mode);
           if (Drupal.settings.activeTags.mode === 'csv') {
             activeTags.addTerms(this, tag);
           }
