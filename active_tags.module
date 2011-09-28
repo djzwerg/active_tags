@@ -16,6 +16,7 @@ function active_tags_field_widget_info() {
       'settings' => array(
         'size' => 60,
         'autocomplete_path' => 'taxonomy/autocomplete',
+        'mode' => 'single',
       ),
       'behaviors' => array(
         'multiple values' => FIELD_BEHAVIOR_CUSTOM,
