@@ -131,7 +131,7 @@ function theme_active_tags_term_list_remove($variables) {
   $output = '<div class="at-term-list">';
   foreach ($variables['terms'] as $term) {
     // @todo add field level id for div id to prevent collisions.
-    $output .= '<div id="at-term-' . $term->tid . '" class="at-term at-term-remove"><span class="at-term-text">' . $term->name . '</span><span class="at-term-action-remove">x</span></div> ';
+    $output .= '<div id="at-term-' . $term->tid . '" class="at-term at-term-remove"><span class="at-term-text">' . check_plain($term->name) . '</span><span class="at-term-action-remove">x</span></div> ';
   }
   $output .= '</div>';
   return $output;
@@ -143,7 +143,7 @@ function theme_active_tags_term_list_remove($variables) {
 function theme_active_tags_term_list_add($variables) {
   $output = '';
   foreach ($variables['terms'] as $term) {
-    $output .= '<div id="at-term-' . $term->tid . '" class="at-term at-term-add"><span class="at-term-text">' . $term->name . '</span><span class="at-term-action-add">x</span></div> ';
+    $output .= '<div id="at-term-' . $term->tid . '" class="at-term at-term-add"><span class="at-term-text">' . check_plain($term->name) . '</span><span class="at-term-action-add">x</span></div> ';
   }
   return $output;
 }
