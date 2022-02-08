@@ -1,7 +1,11 @@
-
+type = module
 name = Active Tags
 description = Enhanced tag widget for free tagging vocabularies.
+package = User interface
+backdrop = 1.x
+
 dependencies[] = taxonomy
 dependencies[] = field
-package = User interface
-core = 7.x
+
+stylesheets[all][] = css/active_tags.css
+scripts[] = js/active_tags.js

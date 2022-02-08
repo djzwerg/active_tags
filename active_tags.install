@@ -6,7 +6,7 @@
  */
 
 /**
- * Implementation of hook_uninstall().
+ * Implements hook_uninstall().
  */
 function active_tags_uninstall() {
   // Delete settings from varible table.
@@ -14,12 +14,3 @@ function active_tags_uninstall() {
           WHERE name LIKE 'active_tags%'";
   db_query($sql);
 }
-
-/**
- * Update from 6.x to 7.x.
- */
-/*
-function active_tags_update_7000() {
-
-}
-*/

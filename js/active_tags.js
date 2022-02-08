@@ -30,13 +30,40 @@ activeTags.parseCsv = function (string, sep) {
 
 activeTags.checkEnter = function (event) {
   if (event.keyCode == 13) {
-    $('#autocomplete').each(function () {
-      this.owner.hidePopup();
-    });
-    $(this).parent().find('.at-add-btn').click();
+    var fieldId = activeTags.hideACPopup(event.target.id);
+    $(fieldId).find('.at-add-btn').click();
     event.preventDefault();
     return false;
   }
+};
+
+activeTags.hideACPopup = function (id) {
+  // Find the field name containing this active tag autocomplete.
+  // @todo: consider different methods to access field id.
+  // .form-wrapper may cause issues if using a theme that strips field classes.
+  // div[id] was previously attempted, but does not work with the keyboard.
+  var field = $('#' + id).parent().closest('.form-wrapper');
+  var fieldId = '#' + $(field).attr("id");
+  var acId = '';
+  // Loop through each child div searching for "ul" tag, which is the autocomplete.
+  $(fieldId + ' > div').children('div').each(function () {
+    if ($(this).has('ul').length > 0) {
+      // Core autocomplete uses an id. Replacements might use class.
+      if (typeof $(this).attr('id') !== "undefined") {
+        acId = '#' + $(this).attr('id');
+      }
+      else if (typeof $(this).attr('class') !== "undefined") {
+        acId = '.' + $(this).attr('class');
+      }
+    }
+  });
+  // If we found an identifier for the autocomplete, hide its popup.
+  if (acId != '') {
+    $(fieldId + ' ' + acId).each(function () {
+      this.owner.hidePopup();
+    });
+  }
+  return fieldId;
 };
 
 activeTags.addTermOnSubmit = function () {
@@ -52,21 +79,19 @@ activeTags.addTerms = function (context, terms) {
 
 activeTags.addTerm = function (context, term) {
   // Hide the autocomplete drop down.
-  $('#autocomplete').each(function () {
-    this.owner.hidePopup();
-  });
+  activeTags.hideACPopup(context.id);
 
   // Removing all HTML tags. Need to wrap in tags for text() to work correctly.
   term = $('<div>' + term + '</div>').text();
-  term = Drupal.checkPlain(term);
+  term = Backdrop.checkPlain(term);
   term = jQuery.trim(term);
 
   if (term != '') {
     var termDiv = $(context);
     var termList = termDiv.parent().find('.at-term-list');
-    termList.append(Drupal.theme('activeTagsTermRemove', term));
+    termList.append(Backdrop.theme('activeTagsTermRemove', term));
     // Attach behaviors to new DOM content.
-    Drupal.attachBehaviors(termList);
+    Backdrop.attachBehaviors(termList);
     activeTags.updateFormValue(termList);
     termList.parent().find('.at-term-entry').val('');
   }
@@ -100,14 +125,13 @@ activeTags.updateFormValue = function (termList) {
 /**
  * Theme a selected term.
  */
-Drupal.theme.prototype.activeTagsTermRemove = function (term) {
+Backdrop.theme.prototype.activeTagsTermRemove = function (term) {
   return '<div class="at-term at-term-remove"><span class="at-term-text">' + term + '</span><span class="at-term-action-remove">x</span></div> ';
 };
 
-
-Drupal.behaviors.activeTagsOnEnter = {
+Backdrop.behaviors.activeTagsOnEnter = {
   attach: function (context, settings) {
-    if ($.browser.mozilla) {
+    if (navigator.userAgent.indexOf("Mozilla") > -1) {
       $('.at-term-entry:not(.activeTagsOnEnter-processed)')
         .addClass('activeTagsOnEnter-processed')
         .keypress(activeTags.checkEnter);
@@ -120,7 +144,7 @@ Drupal.behaviors.activeTagsOnEnter = {
   }
 };
 
-Drupal.behaviors.activeTagsRemove = {
+Backdrop.behaviors.activeTagsRemove = {
   attach: function (context, settings) {
     $('div.at-term-remove:not(.activeTagsRemove-processed)', context)
       .addClass('activeTagsRemove-processed')
@@ -132,14 +156,14 @@ Drupal.behaviors.activeTagsRemove = {
   }
 };
 
-Drupal.behaviors.activeTagsAdd = {
+Backdrop.behaviors.activeTagsAdd = {
   attach: function (context, settings) {
-    $('input.at-add-btn:not(.activeTagsAdd-processed)', context)
+    $('.at-add-btn:not(.activeTagsAdd-processed)', context)
       .addClass('activeTagsAdd-processed')
       .each(function () {
         $(this).click(function (e) {
           var tag = $(this).parent().find('.at-term-entry').val().replace(/["]/g, '');
-          if (Drupal.settings.activeTags.mode === 'csv') {
+          if (Backdrop.settings.activeTags.mode === 'csv') {
             activeTags.addTerms(this, tag);
           }
           else {

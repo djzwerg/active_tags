@@ -68,9 +68,9 @@ function active_tags_field_widget_form(&$form, &$form_state, $field, $instance, 
     '#theme_wrappers' => array(),
   );
 
-  drupal_add_css(drupal_get_path('module', 'active_tags') . '/active_tags.css');
-  drupal_add_js(array('activeTags' => array('mode' => $settings['mode'])), 'setting');
-  drupal_add_js(drupal_get_path('module', 'active_tags') . '/active_tags.js');
+  backdrop_add_css(backdrop_get_path('module', 'active_tags') . '/css/active_tags.css');
+  backdrop_add_js(array('activeTags' => array('mode' => $settings['mode'])), 'setting');
+  backdrop_add_js(backdrop_get_path('module', 'active_tags') . '/js/active_tags.js');
 
   return $element;
 }
@@ -82,6 +82,10 @@ function active_tags_field_widget_error($element, $error, $form, &$form_state) {
   form_error($element, $error['message']);
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function active_tags_taxonomy_autocomplete_validate($element, &$form_state) {
   $element['#value'] = $element['terms']['#value'];
   taxonomy_autocomplete_validate($element, $form_state);
@@ -96,7 +100,7 @@ function active_tags_field_widget_settings_form($field, $instance) {
 
   $options = array(
     'single' => t('Single mode: Include commas in tag'),
-    'csv'  => t('CSV mode: Multiple tags with comma seperation'),
+    'csv' => t('CSV mode: Multiple tags with comma separation'),
   );
 
   $form['mode'] = array(
