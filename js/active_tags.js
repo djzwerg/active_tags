@@ -131,7 +131,7 @@ Backdrop.theme.prototype.activeTagsTermRemove = function (term) {
 
 Backdrop.behaviors.activeTagsOnEnter = {
   attach: function (context, settings) {
-    if (navigator.userAgent.indexOf("Mozilla") > -1) {
+    if (navigator.userAgent.startsWith("Mozilla")) {
       $('.at-term-entry:not(.activeTagsOnEnter-processed)')
         .addClass('activeTagsOnEnter-processed')
         .keypress(activeTags.checkEnter);
@@ -177,9 +177,9 @@ Backdrop.behaviors.activeTagsAdd = {
 };
 
 
-$(window).load(function () {
+$(window).on('load', function () {
   // Setup tags to be added on form submit.
-  $('#node-form').submit(activeTags.addTagOnSubmit);
+  $('#node-form').on('submit', activeTags.addTagOnSubmit);
 });
 
 })(jQuery);
